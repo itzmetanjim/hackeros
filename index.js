@@ -1,5 +1,6 @@
 var bframe=document.getElementById("backgroundframe")
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+/*
 try{
     var bframe=document.getElementById("backgroundframe")
 
@@ -27,7 +28,8 @@ bframe.addEventListener("load",()=>{
     }
 
 
-})
+})*/
+
 bframe.width=window.innerWidth
 bframe.height=window.innerHeight
 bframe.contentWindow.postMessage({type:"getCanvasSize"},"*")
@@ -359,7 +361,7 @@ function launchOS(){
     taskbar[0].style.height=style.height
     taskbar[0].innerHTML=`
         <img src="welcomeicon.png" class="appicon" onclick="welcome()">
-        <img src="githubicon.png" class="appicon" onclick="github()">
+        <img src="githubicon.png" class="appicon" onclick="iframeModal('GitHub','https://tanjim.org/github.com/?homepage#/itzmetanjim/hackeros')">
         `
 }
 function welcome(){
@@ -377,19 +379,21 @@ function welcome(){
         `
 }
 async function github(){
+    alert("there is a bug: use the generic app modal")
     rsc=(a,e,s)=>{
+        
         if(a==="resize2"){
             console.log("resize2")
-            let frame=s.querySelector("iframe")
             frame.style.marginBottom="-40px"
             return
         }
+        
         if(a!="resize"){return}
-        let frame=s.querySelector("iframe")
         if(!frame){return}
         // console.log(s.getBoundingClientRect().width,s.getBoundingClientRect().height)
-        frame.width=(s.getBoundingClientRect().width -3)*(1/scale)
-        frame.height=(s.getBoundingClientRect().height -22)*(1/scale)
+        let GBCR=s.getBoundingClientRect()
+        frame.width=(GBCR.width -3)
+        frame.height=(GBCR.height -22)
         // frame.src=frame.src
     }
     var scale=1
@@ -404,7 +408,7 @@ async function github(){
         `
 
     }
-    let frame=github[2].querySelector("iframe")
+    var frame=github[2].querySelector("iframe")
     // frame.width=github[0].offsetWidth
     // frame.height=github[0].offsetHeight
     // console.log(github[0].offsetWidth,github[0].offsetHeight)
@@ -418,6 +422,51 @@ async function github(){
     // console.log(github[0].getBoundingClientRect().width,github[0].getBoundingClientRect().height)
     // frame.width=github[0].getBoundingClientRect().width -1
     // frame.height=github[0].getBoundingClientRect().height -20
+
+}
+function iframeModal(title,url,h1=700,thres=800,h2=600){
+    rsc=(a,e,s)=>{
+
+        if(a==="resize2"){
+            console.log("resize2")
+            frame.style.marginBottom="-40px"
+            return
+        }
+
+        if(a!="resize"){return}
+        if(!frame){return}
+        // console.log(s.getBoundingClientRect().width,s.getBoundingClientRect().height)
+        let GBCR=s.getBoundingClientRect()
+        frame.width=(GBCR.width -3)
+        frame.height=(GBCR.height -22)
+        // frame.src=frame.src
+    }
+    // var scale=1
+    var appmodal=easyModal(title,"",true,rsc,false,true)
+    if(window.innerHeight>thres){
+    appmodal[2].innerHTML=`
+    <iframe src='${url}' width="${h1}" height="${h1}"></iframe>
+    `
+    }else{
+        appmodal[2].innerHTML=`
+        <iframe src='${url}' width="${h1}" height="${h1}"></iframe>
+        `
+
+    }
+    var frame=appmodal[2].querySelector("iframe")
+    // frame.width=appmodal[0].offsetWidth
+    // frame.height=appmodal[0].offsetHeight
+    // console.log(appmodal[0].offsetWidth,appmodal[0].offsetHeight)
+    frame.style.margin="0"
+    var flag=false
+    frame.addEventListener("load",()=>{
+        if(flag){return}
+        flag=true
+        rsc("resize2",null,appmodal[0])
+    })
+    // console.log(appmodal[0].getBoundingClientRect().width,appmodal[0].getBoundingClientRect().height)
+    // frame.width=appmodal[0].getBoundingClientRect().width -1
+    // frame.height=appmodal[0].getBoundingClientRect().height -20
 
 }
 window.welcome=welcome
